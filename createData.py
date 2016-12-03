@@ -40,10 +40,36 @@ class createDatasetsForUser(object) :
         
     def createTrainTest(self) :
         self.X_train, self.X_test , self.y_train, self.y_test = train_test_split(self.XselectedCorpus, self.yLabels, test_size=0.20)
-        #print self.X_train[0:4]
-        #print self.X_test[0:4]
-        #print self.y_test
-        #print self.y_train
+        # print "X_train"
+        # print self.X_train
+        # print self.X_train.shape
+        # print "X_test"
+        # print self.X_test
+        # print self.X_test.shape
+        # print "y_train"
+        # print self.y_train
+        # print self.y_train.shape
+        # print "y_test"
+        # print self.y_test
+        # print self.y_test.shape
+        
+        
+        self.setTrainData(self.X_train, self.y_train)
+        self.setTestData(self.X_test, self.y_test)
+        
+        # with open("x_train.csv", "wb") as f:
+        #     writer = csv.writer(f)
+        #     writer.writerows(self.X_train)
+        # with open("x_test.csv", "wb") as f:
+        #     writer = csv.writer(f)
+        #     writer.writerows(self.X_test)
+        # with open("y_train.csv", "wb") as f:
+        #     writer = csv.writer(f)
+        #     writer.writerows(self.y_train)
+        # with open("y_test.csv", "wb") as f:
+        #     writer = csv.writer(f)
+        #     writer.writerows(self.y_test)
+        
         #print "Len of training dataSet = %d " %len(self.X_train) 
         #print "Len of testing dataset = %d " %len(self.X_test)
         n1 = self.y_train[ np.array( [x == 1 for x in self.y_train[:,1]])]       
@@ -93,10 +119,17 @@ class createDatasetsForUser(object) :
         #print self.yLabels[0:4]
         ##number of values that are 1 in ylabels
         #print "Number of ylabels that are 1 = %d" %len(self.yLabels[np.array([x == 1 for x in self.yLabels[:,1]])])
+    def setTrainData(self, X_train, y_train):
+        self.X_train = X_train
+        self.y_train = y_train
+                
+    def setTestData(self, X_test, y_test):
+        self.X_test = X_test
+        self.y_test = y_test
     
-    def getX(self):
-        return self.X_train , self.X_test
-    def getY(self) :
-        return self.y_train, self.y_test
-            
+    def getTrainData(self):
+        return self.X_train , self.y_train
+    
+    def getTestData(self) :
+        return self.X_test, self.y_test
         
