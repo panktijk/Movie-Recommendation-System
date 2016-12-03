@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 class User(object) :
+    
     def __init__(self) :
         self.name = None
         self.user = None

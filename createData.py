@@ -9,9 +9,9 @@ reload(hp)
 
 class createDatasetsForUser(object) :
     
-    def __init__(self) :
-        self.usr = U.User()
-        self.usr.usrLogin()
+    def __init__(self,myUser) :
+        self.usr = myUser
+        # self.usr.usrLogin()
         self.usrPrf = U.UserProfile(self.usr)
         self.createData = None
         self.predictions = None #predicted values of user with movie ID
