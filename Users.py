@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 class User(object) :
-    
+
     def __init__(self) :
         self.name = None
         self.user = None
@@ -11,8 +11,7 @@ class User(object) :
     def getUsrHist(self):
         return self.userHist
             
-    def usrLogin(self) :
-        
+    def usrLogin(self) :  
         while True :
             userName = raw_input("Enter Username: ")
             passw = raw_input("Enter Password: ")  

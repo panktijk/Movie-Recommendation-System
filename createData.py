@@ -39,7 +39,7 @@ class createDatasetsForUser(object) :
         self.createTrainTest()
         
     def createTrainTest(self) :
-        self.X_train, self.X_test , self.y_train, self.y_test = train_test_split(self.XselectedCorpus, self.yLabels, test_size=0.20)
+        self.X_train, self.X_test , self.y_train, self.y_test = train_test_split(self.XselectedCorpus, self.yLabels, test_size=0.15)
         # print "X_train"
         # print self.X_train
         # print self.X_train.shape
@@ -112,8 +112,7 @@ class createDatasetsForUser(object) :
             if el >= threshold :
                 return 1
             else :
-                return 0
-                
+                return 0       
         l = len(self.selectedPred)                    
         self.yLabels = np.concatenate((self.selectedPred[:,0].reshape(l,1),findVals(self.selectedPred[:,1]).reshape(l,1)),axis=1)
         #print self.yLabels[0:4]

@@ -118,7 +118,7 @@ class createDataFramesAndIntialFeatureArray(object) :
         #################################################
         self.createGeners()
         
-        #extract first to columns to idMovie column
+        #extract first two columns to idMovie column
         self.idAndMovie = (self.processingDataObj.d1[self.processingDataObj.d1.columns[[0,1]]]).as_matrix()
         
         #################################################

@@ -5,16 +5,13 @@ import pickle
 import Users as US
 from ast import literal_eval
 reload(CD)
+reload(bm)
 reload(US)
 
-
-def loaddata(myUser):
+def loadData(myUser):
     obj = None
-
     path = os.getcwd() + "/Data/StoredObjects/"
-
-    fo = open(path+'isStored','r')
-
+    fo = open(path+'IsStored','r')
     v = fo.read()
     if  v =='True'  :
         with open(path+'myObj.pkl', "rb") as input:
@@ -27,17 +24,21 @@ def loaddata(myUser):
         fi = open(path + 'IsStored', 'w')
         fi.write("True")
         fi.close()
-
-    fo.close()
+    fo.close()	
     return obj
 
 threshold = 0.5
-#startCreation = CD.createDatasetsForUser()
-#startCreation.start(threshold)
 myUser = None
 myUser = US.User()
 myUser.usrLogin()
 
-startCreation = loaddata(myUser)
+startCreation = loadData(myUser)
 
-buildModel = bm.Config(startCreation)
+# def getModel(startCreation):
+# 	buildModel = bm.Model(startCreation)
+# 	return buildModel
+
+# model = getModel(startCreation)
+
+buildModel = bm.Model(startCreation)
+
