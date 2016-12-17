@@ -6,6 +6,11 @@ from sklearn.model_selection import cross_val_score, ShuffleSplit
 import createData as CD
 from sklearn.metrics import f1_score, roc_curve, auc, precision_recall_fscore_support
 
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report, precision_score, recall_score
+from sklearn.metrics import confusion_matrix
+import itertools
+
 class Model(object):   
 
     def __init__(self, object) :
@@ -43,6 +48,8 @@ class Model(object):
         print p
         self.plot_roc(yTest, p)
         
+        self.evaluate(X_test,yTest, clf)
+
         # print prob
         ind =  np.argpartition(prob[:,1], -5)[-5:]
         
@@ -84,5 +91,31 @@ class Model(object):
         plt.title('Receiver operating characteristic')
         plt.legend(loc="lower right")
         plt.show()
+    
+    def evaluate(self, X_test, yTest, clf):
+       
+        expect = yTest
+        predicted = clf.predict(X_test)
 
+        print("---------------------------------------------------------")
+        print("                 Classification Accuracy                 ")
+        print(str(accuracy_score(expect, predicted)))
+        print("---------------------------------------------------------")
+        print("---------------------------------------------------------")
+        print("                 Classification Report                   ")
+        print(classification_report(expect, predicted))
+        
+        # Compute confusion matrix
+        cnf_matrix = confusion_matrix(expect, predicted)
+        np.set_printoptions(precision=2)
+        #confusion_matrix = confusion_matrix(expect, predicted).tolist()
+        cm_total = float(sum(sum(x) for x in cnf_matrix))
 
+        print("---------------------------------------------------------")
+        print("---------------------------------------------------------")
+        print("              False Positives and Negatives              ")
+
+        print "False Positive: ", cnf_matrix[1][0] / cm_total
+        print "False Negative: ", cnf_matrix[0][1] / cm_total
+
+  
