@@ -9,7 +9,7 @@ from sklearn.metrics import f1_score, roc_curve, auc, precision_recall_fscore_su
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report, precision_score, recall_score
 from sklearn.metrics import confusion_matrix
-import itertools
+from sklearn.model_selection import GridSearchCV
 
 class Model(object):   
 
@@ -30,12 +30,21 @@ class Model(object):
         # print "clf.decision_function(X_test) = ", clf.decision_function(X_test)
         # print clf.score(X_test, yTest)
         # print
-
-        clf = MLPClassifier(solver = 'lbfgs', hidden_layer_sizes=(5, ), activation = 'logistic', max_iter = 1000)
+        parameters = {'solver':('lbfgs','sgd','adam'),
+                      'activation' : ('relu','logistic','tanh'),
+                        'max_iter' : (500,1000),
+                        'hidden_layer_sizes' : ((5,), (10,))
+                        }
+        clf = MLPClassifier()
+        #clf = MLPClassifier(solver = 'lbfgs', hidden_layer_sizes=(5, ), activation = 'logistic', max_iter = 1000)
+        clf = GridSearchCV(clf, parameters)
+        
         # cv = ShuffleSplit(n_splits=3, test_size=0.3, random_state=0)
         # scores = cross_val_score(clf, X_train, yTrain, cv=cv)
         # print("Cross Validation Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         clf.fit(X_train, yTrain)
+        
+        
         print "Prediction of x_test"
         y_pred = clf.predict(X_test)
         print clf.score(X_test, yTest)
@@ -48,6 +57,7 @@ class Model(object):
         print p
         self.plot_roc(yTest, p)
         
+        print clf
         self.evaluate(X_test,yTest, clf)
 
         # print prob
@@ -91,6 +101,8 @@ class Model(object):
         plt.title('Receiver operating characteristic')
         plt.legend(loc="lower right")
         plt.show()
+        
+        
     
     def evaluate(self, X_test, yTest, clf):
        
