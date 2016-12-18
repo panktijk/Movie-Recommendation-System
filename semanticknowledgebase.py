@@ -63,15 +63,15 @@ def create_network(movies, genres, ratings):
     return facts
     
 def get_similar_movies(object):
-    movies, genres, ratings = create_entities(df.head(1000))
+    movies, genres, ratings = create_entities(df)
     create_network(movies, genres, ratings)    
     liked_movies = [x[0].tolist() for x in object.usr.getUsrHist() if x.tolist()[1] == 1]
-    print liked_movies
+    #print liked_movies
     for lm in liked_movies:
         lm_entity = get_movie_entity(str(lm), movies)
         if lm_entity != None:
             liked_genres = lm_entity.getObjects(belongsTo)
-            print tostr(liked_genres)
+            #print tostr(liked_genres)
             for lg in liked_genres:
                 lg_entity = get_genre_entity(tostr(lg), genres)
                 similar_movies = [tostr(sm) for sm in lg_entity.getObjects(whatBelongsTo)]

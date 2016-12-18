@@ -4,6 +4,9 @@ import os
 import pickle
 import Users as US
 from ast import literal_eval
+import semanticknowledgebase as kb
+import numpy as np
+reload(kb)
 reload(CD)
 reload(bm)
 reload(US)
@@ -32,7 +35,9 @@ myUser = None
 myUser = US.User()
 myUser.usrLogin()
 
+print '-------------------------Content Based Filtering Started----------------------------------\n'
 startCreation = loadData(myUser)
+print '-----------------------Content Based Filtering Completed----------------------------------\n'
 
 # def getModel(startCreation):
 # 	buildModel = bm.Model(startCreation)
@@ -40,4 +45,30 @@ startCreation = loadData(myUser)
 
 # model = getModel(startCreation)
 
+print '-------------------------------Building Model --------------------------------------------\n'
+
 buildModel = bm.Model(startCreation)
+
+print '----------------------------------------Model Built---------------------------------------\n'
+
+X_corpus = startCreation.createData.Xcorpus
+
+print '----------------------------Semantic Based Search Started-----------------------------------\n'
+similar_movies = kb.get_similar_movies(startCreation)
+input_movies = [int(m) for m in similar_movies if m not in startCreation.usr.getUsrHist()[0]]
+print '---------------------------Semantic Based Search Completed----------------------------------\n'
+
+@np.vectorize 
+def selected(elem) : return elem in input_movies
+
+selected_movies = X_corpus[selected(X_corpus[:,0])]
+
+#print input_movies
+print '---------------------------Finding Recommendations for you----------------------------------\n'
+moviesIDs = buildModel.predict(selected_movies)
+
+print '----------------------------Top 10 Recommendations for you----------------------------------\n'
+
+idAndMovie = startCreation.createData.idAndMovie
+predictions = [x[1] for x in idAndMovie if x[0] in moviesIDs]
+print predictions

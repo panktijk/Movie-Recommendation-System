@@ -14,23 +14,20 @@ from sklearn.model_selection import GridSearchCV
 class Model(object):   
 
     def __init__(self, object) :
-        self.X_train, self.y_train = object.getTrainData()
-        self.X_test, self.y_test = object.getTestData()
-        self.yTrain = np.array(self.y_train[:,1], dtype = int)
-        self.yTest = np.array(self.y_test[:,1], dtype = int)
+        self.full_X_train, self.full_y_train = object.getTrainData()
+        self.full_X_test, self.full_y_test = object.getTestData()
+        self.X_train, self.y_train = self.full_X_train[:,1:],self.full_y_train[:,1:] 
+        self.X_test, self.y_test = self.full_X_test[:,1:], self.full_y_test[:,1:]
+        self.yTrain = np.array(self.full_y_train[:,1], dtype = int)
+        self.yTest = np.array(self.full_y_test[:,1], dtype = int)
         self.idsTest = self.y_test[:,0]
+        self.acc = None
+        self.model = None
         self.classify(self.X_train, self.yTrain, self.X_test, self.yTest)
+        
 
     def classify(self, X_train, yTrain, X_test, yTest):
-        # clf = linear_model.LogisticRegressionCV(max_iter = 20000, solver = 'newton-cg')
-        # w = clf.fit(X_train, yTrain)
-        # print w
-        # x = clf.predict(X_test)
-        # print x
-        # print "clf.decision_function(X_test) = ", clf.decision_function(X_test)
-        # print clf.score(X_test, yTest)
-        # print
-<<<<<<< Updated upstream
+       
         parameters = {'solver':('lbfgs','sgd','adam'),
                       'activation' : ('relu','logistic','tanh'),
                         'max_iter' : (500,1000),
@@ -40,36 +37,25 @@ class Model(object):
         #clf = MLPClassifier(solver = 'lbfgs', hidden_layer_sizes=(5, ), activation = 'logistic', max_iter = 1000)
         clf = GridSearchCV(clf, parameters)
         
-=======
-
-        clf = MLPClassifier(solver = 'sgd', hidden_layer_sizes=(5, ), activation = 'logistic', max_iter = 800)
->>>>>>> Stashed changes
         # cv = ShuffleSplit(n_splits=3, test_size=0.3, random_state=0)
         # scores = cross_val_score(clf, X_train, yTrain, cv=cv)
         # print("Cross Validation Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         clf.fit(X_train, yTrain)
         
+        self.model = clf
         
-        print "Prediction of x_test"
-        y_pred = clf.predict(X_test)
-        print clf.score(X_test, yTest)
-        prob = clf.predict_proba(X_test)
+        X = np.vstack((X_train,X_test))
+        X_full = np.vstack((self.full_X_train, self.full_X_test))
+        prob = clf.predict_proba(X)
         #self.calculate_f1(yTest, prob)
         p = np.array([a[b^1] for a,b in zip(prob,yTest)])
-        #print prob
-        #print yTest
-        #print y_pred
-        #print p
+        
         self.plot_roc(yTest, p)
         
-        print clf
+        #print clf
         self.evaluate(X_test,yTest, clf)
-
-        # print prob
-        ind =  np.argpartition(prob[:,1], -5)[-5:]
-        print ind
-         #print self.createData.idAndMovie[ind][:,1]
-         
+        
+        
     def calculate_f1(self, yTest, y_pred):
         print "\n======================="
         precision, recall, _, _ = precision_recall_fscore_support(yTest, y_pred, average='macro') 
@@ -86,16 +72,16 @@ class Model(object):
     # http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html 
         fpr, tpr, _ = roc_curve(yTest, y_pred)
         roc_auc = auc(fpr, tpr)  
-        print roc_auc 
+        #print roc_auc 
         
     # Compute micro-average ROC curve and ROC area
         fpr_micro, tpr_micro, _ = roc_curve(yTest, y_pred)  
         roc_auc_micro = auc(fpr_micro, tpr_micro)    
-        print "\n======================="
-        print '\nfpr_micro = ', fpr_micro
-        print '\ntpr_micro = ', tpr_micro
-        print '\nroc_auc_micro = ', roc_auc_micro
-        print "\n======================="
+        #print "\n======================="
+        #print '\nfpr_micro = ', fpr_micro
+        #print '\ntpr_micro = ', tpr_micro
+        #print '\nroc_auc_micro = ', roc_auc_micro
+        #print "\n======================="
         plt.figure()
         lw = 2
 
@@ -115,7 +101,8 @@ class Model(object):
        
         expect = yTest
         predicted = clf.predict(X_test)
-
+        self.acc = accuracy_score(expect, predicted)*100
+        
         print("---------------------------------------------------------")
         print("                 Classification Accuracy                 ")
         print(str(accuracy_score(expect, predicted)))
@@ -125,16 +112,28 @@ class Model(object):
         print(classification_report(expect, predicted))
         
         # Compute confusion matrix
-        cnf_matrix = confusion_matrix(expect, predicted)
-        np.set_printoptions(precision=2)
+        #cnf_matrix = confusion_matrix(expect, predicted)
+        #np.set_printoptions(precision=2)
         #confusion_matrix = confusion_matrix(expect, predicted).tolist()
-        cm_total = float(sum(sum(x) for x in cnf_matrix))
+        #cm_total = float(sum(sum(x) for x in cnf_matrix))
 
-        print("---------------------------------------------------------")
-        print("---------------------------------------------------------")
-        print("              False Positives and Negatives              ")
+#        print("---------------------------------------------------------")
+#        print("---------------------------------------------------------")
+#        print("              False Positives and Negatives              ")
+#
+#        print "False Positive: ", cnf_matrix[1][0] / cm_total
+#        print "False Negative: ", cnf_matrix[0][1] / cm_total
 
-        print "False Positive: ", cnf_matrix[1][0] / cm_total
-        print "False Negative: ", cnf_matrix[0][1] / cm_total
-
+    def predict(self,data) :
+        clf = self.model
+        prob = clf.predict_proba(data[:,1:])
+        ind =  np.argpartition(prob[:,1], -10)[-10:]
+        moviesID = []
+        #finding movie ids of top 10 movies
+        for x in ind :
+            movie = data[x]
+            moviesID.append(movie[0])
+        #print "movied IDS = %s" %moviesID      
+        return moviesID
+        
   
