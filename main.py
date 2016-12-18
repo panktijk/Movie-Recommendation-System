@@ -41,4 +41,3 @@ startCreation = loadData(myUser)
 # model = getModel(startCreation)
 
 buildModel = bm.Model(startCreation)
-

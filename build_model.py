@@ -30,6 +30,7 @@ class Model(object):
         # print "clf.decision_function(X_test) = ", clf.decision_function(X_test)
         # print clf.score(X_test, yTest)
         # print
+<<<<<<< Updated upstream
         parameters = {'solver':('lbfgs','sgd','adam'),
                       'activation' : ('relu','logistic','tanh'),
                         'max_iter' : (500,1000),
@@ -39,6 +40,10 @@ class Model(object):
         #clf = MLPClassifier(solver = 'lbfgs', hidden_layer_sizes=(5, ), activation = 'logistic', max_iter = 1000)
         clf = GridSearchCV(clf, parameters)
         
+=======
+
+        clf = MLPClassifier(solver = 'sgd', hidden_layer_sizes=(5, ), activation = 'logistic', max_iter = 800)
+>>>>>>> Stashed changes
         # cv = ShuffleSplit(n_splits=3, test_size=0.3, random_state=0)
         # scores = cross_val_score(clf, X_train, yTrain, cv=cv)
         # print("Cross Validation Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
@@ -51,10 +56,10 @@ class Model(object):
         prob = clf.predict_proba(X_test)
         #self.calculate_f1(yTest, prob)
         p = np.array([a[b^1] for a,b in zip(prob,yTest)])
-        print prob
-        print yTest
-        print y_pred
-        print p
+        #print prob
+        #print yTest
+        #print y_pred
+        #print p
         self.plot_roc(yTest, p)
         
         print clf
@@ -62,7 +67,9 @@ class Model(object):
 
         # print prob
         ind =  np.argpartition(prob[:,1], -5)[-5:]
-        
+        print ind
+         #print self.createData.idAndMovie[ind][:,1]
+         
     def calculate_f1(self, yTest, y_pred):
         print "\n======================="
         precision, recall, _, _ = precision_recall_fscore_support(yTest, y_pred, average='macro') 
