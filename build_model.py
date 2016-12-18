@@ -107,9 +107,9 @@ class Model(object):
         print("                 Classification Accuracy                 ")
         print(str(accuracy_score(expect, predicted)))
         print("---------------------------------------------------------")
-        print("---------------------------------------------------------")
-        print("                 Classification Report                   ")
-        print(classification_report(expect, predicted))
+        #print("---------------------------------------------------------")
+        #print("                 Classification Report                   ")
+        #print(classification_report(expect, predicted))
         
         # Compute confusion matrix
         #cnf_matrix = confusion_matrix(expect, predicted)
